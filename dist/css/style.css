@@ -1,0 +1,11 @@
+#graph{
+	width:800px;
+	height: 600px;
+	border:1px solid black;
+	float:left;
+}
+.colorDiv{
+	float:left;
+	margin-left:50px;
+	margin-top:30px;
+}

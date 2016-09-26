@@ -1,0 +1,115 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" href="dist/css/style.css">
+	<link href="dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="dist/css/bootstrap-colorpicker.min.css" rel="stylesheet">
+	<script src="dist/js/jquery-1.9.1.js"></script>
+	<script src="dist/js/d3.v3.min.js"></script>
+	<script src="dist/js/bootstrap.min.js"></script>
+	<script src="dist/js/bootstrap-colorpicker.js"></script>
+	<script src="dist/js/graph.js"></script>
+    <script type="text/javascript">
+
+    	var myVar;
+    	var animationFlag = true;
+    	var ptX_arr = [];
+    	var ptY_arr = [];
+    	var number_arr = [];
+    	var graph;
+    	var color = "#000000";
+    	var color_arr = [];
+    	var number = 2;
+
+    	var dotR = 4;
+    	var Animation_Index = 0;
+
+    	$(document).ready(function(){
+    		$('.colorpicker').colorpicker().on('changeColor.colorpicker', function(event){
+			  color = event.color.toHex();
+			});
+
+		    graph = d3.select("#graph")
+		    .append("svg")
+		    .attr("width", 800)
+		    .attr("height", 600); 
+
+	    	$('#graph').click(function(e){
+	    		if(animationFlag == true){
+
+		    		ptX_arr.push(e.offsetX);
+		    		ptY_arr.push(e.offsetY);
+		    		color_arr.push(color);
+		    		if(ptX_arr.length == 1){
+		    			number_arr.push(0);
+		    		}else if(ptX_arr.length == 2){
+		    			number_arr.push(1);
+		    		}else{
+		    			number_arr.push(number);
+		    		}
+		    		drawChart(ptX_arr.length-1);
+
+	    		}else{
+	    			alert("If you wanna draw line, you should click stop button!");
+	    		}
+	    	});
+
+	    	$('.number').change(function(){
+	    		var val = $(this).val();
+	    		if(val <2 || val > ptX_arr.length){
+	    			$(this).val(number);
+	    		}else{
+		    		number = parseInt($(this).val());
+	    		}
+	    	})
+
+	    	$('.start').click(function(){
+	    		if(ptX_arr.length > 1){
+		    		myVar = setInterval(function(){ myTimer() }, 1000);
+		    		Animation_Index = 0;
+		    		animationFlag = false;
+	   				$('.stop').removeAttr("disabled")
+		    		$('#graph svg').html("");
+	    		}else{
+	    			alert("First of all, you should draw lines!");
+	    		}
+	    	});
+
+	    	$('.stop').click(function(){
+				clearInterval(myVar);
+	    		animationFlag = true;
+	    		var k;
+   				$('.stop').attr("disabled","disabled");
+	    		for(k = 0; k < ptX_arr.length; k++){
+	    			drawChart(k);
+	    		}
+	    	});
+    	})
+
+		function myTimer() {
+			drawChart(Animation_Index);
+			if(Animation_Index == ptX_arr.length){
+	    		Animation_Index = 0;
+	    		$('#graph svg').html("");
+			}else{
+				Animation_Index++;
+			}
+		}
+    	
+    </script>
+</head>
+<body>
+	<div class="graph" id="graph"></div>
+	<div class="colorDiv">
+		<h4>You can see animation with "Start" Button.(First of all, you should draw lines)</h4>
+		<h4>You can't draw lines when the animation is activated.(You have to click "stop button", then you can draw lines.)</h4>
+		<h3>Color</h3>
+		<input type="text" class="colorpicker" value="#000000" />
+		<h3>Number</h3>
+		<input type="number" min="2" class="number" value="2" />
+		<h3>Animation</h3>
+		<input type="button" class="start" value="Start"/>
+		<input type="button" class="stop" disabled value="Stop"/>
+	</div>
+</body>
+</html>
